@@ -1,7 +1,7 @@
 const PokemonThumbnails = ({id, name, image, type}) => {
   return (
-    <div>
-      <div class="number">
+    <div className="thumb-container grass">
+      <div className="number">
         <small>#0{id}</small>
       </div>
       <img src={image} art={name} />
