@@ -6,7 +6,7 @@ function App() {
   const [allPokemons, setAllPokemons] = useState([]);
   // APIからデータを取得する, パラメータにlimitを設定し、20件取得する
   const [url, setUrl] = useState("https://pokeapi.co/api/v2/pokemon?limit=20");
-
+  // もっと見るボタンのloading表示用
   const [isLoading, setIsLoading] = useState(false);
 
   const getAllPokemons = () => {
@@ -48,7 +48,7 @@ function App() {
         }
 
         // 既存のデータを展開し、新しいデータを追加する
-        setAllPokemons(currentList => [...currentList, newList]);
+        setAllPokemons(currentList => [...currentList, newList].sort((a,b) => a.id - b.id));
       });
     });
   };
