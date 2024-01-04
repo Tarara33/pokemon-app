@@ -1,6 +1,8 @@
 import './App.css';
 import { useEffect, useState } from 'react';
 import PokemonThumbnails from './component/PokemonThumbnails';
+import pokemonJson from './pokemon.json';
+import pokemonTypeJson from './pokemonType.json';
 
 function App() {
   const [allPokemons, setAllPokemons] = useState([]);
@@ -30,27 +32,45 @@ function App() {
       const pokemonUrl = `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`;
       fetch(pokemonUrl)
       .then(res => res.json())
-      .then(data => {
+      .then(async (data) => {
         // ポケモンの画像の場所
         // - (ハイフン)にlintで自動で半角スペースが入ってしまうため、[]で対応
         // data.sprites.other.official-artwork.front_default でも大丈夫です
         const _image = data.sprites.other["official-artwork"].front_default;
+        // アイコン画像
         const _iconImage = data.sprites.other.dream_world.front_default;
         // ポケモンのタイプの場所
         const _type = data.types[0].type.name;
+        // 日本語訳の関数発動
+        const japanese = await translateToJapanese(data.name, _type);
 
         const newList = {
           id: data.id,
           name: data.name,
           iconImage: _iconImage,
           image: _image,
-          type: _type
+          type: _type,
+          jpName: japanese.name,
+          jpType: japanese.type
         }
 
         // 既存のデータを展開し、新しいデータを追加する
         setAllPokemons(currentList => [...currentList, newList].sort((a,b) => a.id - b.id));
       });
     });
+  };
+
+  const translateToJapanese = async (name, _type) => {
+    // 日本語の名前探す
+    const jpName = await pokemonJson.find(
+      (pokemon) => pokemon.en.toLowerCase() === name
+    ).ja;
+
+    // 日本語のタイプ探す
+    const jpType = await pokemonTypeJson[_type];
+
+    console.log(jpType)
+    return { name: jpName, type: jpType };
   };
 
   useEffect(() => {
@@ -70,6 +90,8 @@ function App() {
               image={pokemon.image}
               type={pokemon.type}
               key={index}
+              jpName={pokemon.jpName}
+              jpType={pokemon.jpType}
               />
           ))}
         </div>
