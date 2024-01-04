@@ -35,12 +35,14 @@ function App() {
         // - (ハイフン)にlintで自動で半角スペースが入ってしまうため、[]で対応
         // data.sprites.other.official-artwork.front_default でも大丈夫です
         const _image = data.sprites.other["official-artwork"].front_default;
+        const _iconImage = data.sprites.other.dream_world.front_default;
         // ポケモンのタイプの場所
         const _type = data.types[0].type.name;
 
         const newList = {
           id: data.id,
           name: data.name,
+          iconImage: _iconImage,
           image: _image,
           type: _type
         }
@@ -64,6 +66,7 @@ function App() {
             <PokemonThumbnails
               id={pokemon.id}
               name={allPokemons[index]?.name}
+              iconImage={pokemon.iconImage}
               image={pokemon.image}
               type={pokemon.type}
               key={index}
