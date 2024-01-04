@@ -4,29 +4,6 @@ import PokemonThumbnails from './component/PokemonThumbnails';
 
 function App() {
   const [allPokemons, setAllPokemons] = useState([]);
-
-  // 仮でデータを作成する
-  const pokemons = [
-    {
-      id: 1,
-      name: "フシギダネ",
-      image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/1.png",
-      type: "くさ"
-    },
-    {
-      id: 2,
-      name: "フシギソウ",
-      image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/2.png",
-      type: "くさ"
-    },
-    {
-      id: 3,
-      name: "フシギバナ",
-      image: "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/pokemon/other/official-artwork/3.png",
-      type: "くさ"
-    },
-  ];
-
   // APIからデータを取得する
   // パラメータにlimitを設定し、20件取得する
   const [url, setUrl] = useState("https://pokeapi.co/api/v2/pokemon?limit=20");
@@ -47,18 +24,26 @@ function App() {
   // 個別のポケモンのデータを１つ１つ取得
   const createPokemonObject = (results)  => {
     results.forEach(pokemon => {
-      const pokemonUrl = "https://pokeapi.co/api/v2/pokemon/${pokemon.name}";
+      const pokemonUrl = `https://pokeapi.co/api/v2/pokemon/${pokemon.name}`;
       fetch(pokemonUrl)
       .then(res => res.json())
       .then(data => {
         // ポケモンの画像の場所
         // - (ハイフン)にlintで自動で半角スペースが入ってしまうため、[]で対応
         // data.sprites.other.official-artwork.front_default でも大丈夫です
-        const image = console.log(data.sprites.other["official-artwork"].front_default);
+        const _image = data.sprites.other["official-artwork"].front_default;
         // ポケモンのタイプの場所
-        const type = console.log(data.types[0].type.name);
+        const _type = data.types[0].type.name;
 
-        console.log(data.name, image, type)
+        const newList = {
+          id: data.id,
+          name: data.name,
+          image: _image,
+          type: _type
+        }
+
+        // 既存のデータを展開し、新しいデータを追加する
+        setAllPokemons(currentList => [...currentList, newList]);
       });
     });
   };
@@ -72,7 +57,7 @@ function App() {
       <h1>ポケモン図鑑</h1>
       <div className='pokemon-container'>
         <div className='all-container'>
-          {pokemons.map((pokemon, index) => (
+          {allPokemons.map((pokemon, index) => (
             <PokemonThumbnails
               id={pokemon.id}
               name={allPokemons[index]?.name}
@@ -82,6 +67,7 @@ function App() {
               />
           ))}
         </div>
+          <button className="load-more" onClick={getAllPokemons}>もっとみる！</button>
       </div>
     </div>
   );
